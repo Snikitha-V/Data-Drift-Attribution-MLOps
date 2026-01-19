@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+
+# Data and models
+data/
+models/
+mlruns/
+
+# Secrets
+.env
+.kaggle/
+*.pem
+kaggle.json
+
+# OS files
+.DS_Store
+
+# Archives
+*.zip
