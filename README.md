@@ -1,10 +1,10 @@
-# 🛡️ Drift Attribution & Intelligent Retraining Trigger for Fraud Models
+# Drift Attribution & Intelligent Retraining Trigger for Fraud Models
 
 This project presents an end-to-end MLOps system that goes beyond drift detection to explain drift, quantify its impact, and make intelligent retraining decisions. Unlike naïve retrain-on-drift approaches, the system retrains only when drift is harmful, persistent, and performance-degrading.
 
 The core contribution is a generalizable retraining policy trained on one dataset and validated unchanged across multiple fraud domains.
 
-## ✨ Key Contributions
+## Key Contributions
 
 - Statistical Drift Detection using PSI + KS over rolling time windows
 - Root-Cause Drift Attribution via PSI × SHAP importance
@@ -13,7 +13,7 @@ The core contribution is a generalizable retraining policy trained on one datase
 - Cross-Dataset Generalization without re-tuning
 - Stress Test + Ablation Study for robustness and design validation
 
-## 📊 Datasets Used
+## Datasets Used
 
 | Dataset                  | Purpose                          |
 |--------------------------|----------------------------------|
@@ -23,7 +23,7 @@ The core contribution is a generalizable retraining policy trained on one datase
 
 All datasets are treated as tabular, temporally ordered streams.
 
-## 🧠 System Overview
+## System Overview
 
 ```
 Data → Baseline Model
@@ -37,7 +37,7 @@ Data → Baseline Model
 
 The baseline window is fixed. All monitoring windows are compared against it, mimicking production monitoring.
 
-## 🧱 Project Structure
+## Project Structure
 
 ```
 fraud-drift-retraining/
@@ -62,7 +62,7 @@ fraud-drift-retraining/
 └── README.md
 ```
 
-## 🔍 Drift Detection
+## Drift Detection
 
 **PSI (Population Stability Index)**: Quantifies magnitude of distributional shift. PSI > 0.25 flagged as severe.
 
@@ -72,7 +72,7 @@ Drift is computed per feature per window against a fixed baseline.
 
 *Results*: Generated drift reports (e.g., `drift_window_0.csv`) showing PSI and KS values for each feature across windows.
 
-## 🧩 Drift Attribution
+## Drift Attribution
 
 Drift alone does not imply action. We compute drift impact as:
 
@@ -87,7 +87,7 @@ Outputs include:
 
 *Results*: Attribution reports (e.g., `attribution_window_0.csv`) with group-level impacts, identifying which feature categories are most affected by drift.
 
-## 📦 Window-Level Signal Compression
+## Window-Level Signal Compression
 
 Rich attribution outputs are compressed into one row per window, e.g.:
 
@@ -98,7 +98,7 @@ These signals are low-dimensional, dataset-agnostic, and suitable for automated 
 
 *Results*: `window_signals.csv` with compressed signals for all windows, ready for policy application.
 
-## 🔁 Intelligent Retraining Policy
+## Intelligent Retraining Policy
 
 An interpretable, frozen rule-based policy decides when to retrain:
 
@@ -112,7 +112,7 @@ Key properties: Avoids retraining on harmless drift, anchored to performance imp
 
 *Results*: `window_policy_decisions.csv` with retrain flags per window. In IEEE-CIS, policy triggered retrains only when necessary.
 
-## 🌍 Cross-Dataset Validation
+## Cross-Dataset Validation
 
 The same policy (unchanged) is applied to PaySim and Credit Card Fraud.
 
@@ -134,7 +134,7 @@ The same policy (unchanged) is applied to PaySim and Credit Card Fraud.
 
 *Conclusion*: The policy achieves equal or better performance with fewer retrains, demonstrating robust generalization.
 
-## 🧪 Stress Test & Ablation
+## Stress Test & Ablation
 
 ### Stress Test
 A strong distributional shift was injected into high-impact monetary features without performance degradation. The policy correctly suppressed retraining, demonstrating robustness to false positives.
@@ -150,7 +150,7 @@ A strong distributional shift was injected into high-impact monetary features wi
 
 *Results*: Removing persistence or attribution increases unnecessary retraining, validating each component's necessity.
 
-## 🎯 Key Takeaways
+## Key Takeaways
 
 - Drift ≠ retrain
 - Attribution matters
@@ -158,9 +158,10 @@ A strong distributional shift was injected into high-impact monetary features wi
 - Performance impact is essential
 - One policy can generalize across domains
 
-## 🚀 Status
+## Status
 
 ✅ End-to-end system complete  
 ✅ Stress-tested & ablated  
 ✅ Cross-dataset validated  
 ✅ Conference / industry-ready
+
