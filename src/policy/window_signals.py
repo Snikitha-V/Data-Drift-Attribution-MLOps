@@ -109,7 +109,8 @@ def _prepare_features(df: pd.DataFrame, train_df: pd.DataFrame, val_df: pd.DataF
     return X
 
 
-def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, feature_cols: list, train_df: pd.DataFrame, val_df: pd.DataFrame) -> Dict:
+def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, windows: list, model, feature_cols: list, train_df: pd.DataFrame, val_df: pd.DataFrame) -> Dict:
+    """Compute signals for a specific window using provided windows list (no re-loading)."""
     psi_df = load_psi(window_id)
     attr_df = load_attribution(window_id)
 
@@ -126,7 +127,6 @@ def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, fea
         top_row = attr_df.sort_values("share", ascending=False).iloc[0]
         top_group = str(top_row["group"])
         top_group_share = float(top_row["share"])
-        # ensure non-negative shares and normalized vector for entropy
         shares = attr_df["share"].clip(lower=0).values
         if shares.sum() > 0:
             attr_entropy = float(entropy(shares))
@@ -138,13 +138,8 @@ def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, fea
         attr_entropy = 0.0
 
     # ---- Performance signal ----
-    # compute baseline AUC and window AUC if model is available; otherwise try to read baseline val_auc from MLflow
     baseline_auc = float(np.nan)
     window_auc = float(np.nan)
-
-    # get windows list
-    df = load_data()
-    _, windows = create_time_windows(df, time_col="TransactionDT", baseline_days=7, window_days=7)
 
     if window_id >= len(windows):
         raise IndexError(f"Window id {window_id} out of range (0..{len(windows)-1})")
@@ -152,7 +147,6 @@ def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, fea
     this_win = windows[window_id]
 
     if model is not None:
-        # compute baseline AUC on baseline_df using the model
         try:
             from sklearn.metrics import roc_auc_score
             y_baseline = baseline_df["isFraud"]
@@ -162,7 +156,6 @@ def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, fea
         except Exception:
             baseline_auc = float(np.nan)
 
-        # compute window AUC
         try:
             y_win = this_win["isFraud"]
             X_win = _prepare_features(this_win, train_df, val_df, feature_cols)
@@ -190,10 +183,10 @@ def compute_window_signals(window_id: int, baseline_df: pd.DataFrame, model, fea
     }
 
 
-def build_window_signal_table(baseline_df: pd.DataFrame, num_windows: int, model, feature_cols: list, train_df: pd.DataFrame, val_df: pd.DataFrame) -> pd.DataFrame:
+def build_window_signal_table(baseline_df: pd.DataFrame, windows: list, model, feature_cols: list, train_df: pd.DataFrame, val_df: pd.DataFrame) -> pd.DataFrame:
     rows = []
-    for w in range(num_windows):
-        rows.append(compute_window_signals(w, baseline_df, model, feature_cols, train_df, val_df))
+    for w in range(len(windows)):
+        rows.append(compute_window_signals(w, baseline_df, windows, model, feature_cols, train_df, val_df))
     return pd.DataFrame(rows)
 
 

@@ -1,0 +1,17 @@
+{
+  "periodic": {
+    "retrain_count": 0,
+    "mean_auc": 0.8124295738627902,
+    "std_auc": 0.0
+  },
+  "psi_only": {
+    "retrain_count": 1,
+    "mean_auc": 0.8124295738627902,
+    "std_auc": 0.0
+  },
+  "policy": {
+    "retrain_count": 0,
+    "mean_auc": 0.8124295738627902,
+    "std_auc": 0.0
+  }
+}

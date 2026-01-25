@@ -11,18 +11,20 @@ MIN_SEVERE_FEATURES = 5
 PERF_DROP_THRESHOLD = 0.01
 
 
-def apply_policy(window_df: pd.DataFrame) -> pd.DataFrame:
+def apply_policy(window_df: pd.DataFrame, use_persistence=True, use_num_severe=True) -> pd.DataFrame:
     """
     Adds a `retrain` decision column to the window signals dataframe.
     Decision rule:
       - max_psi > PSI_THRESHOLD
-      - num_severe >= MIN_SEVERE_FEATURES
+      - if use_num_severe: num_severe >= MIN_SEVERE_FEATURES
       - perf_drop >= PERF_DROP_THRESHOLD (must be a finite number)
-    Additionally, the condition must persist for PERSISTENCE_WINDOWS consecutive windows.
+    Additionally, if use_persistence, the condition must persist for PERSISTENCE_WINDOWS consecutive windows.
     """
 
     # ensure sorted by window
     window_df = window_df.sort_values("window").reset_index(drop=True)
+
+    persistence_required = PERSISTENCE_WINDOWS if use_persistence else 1
 
     decisions = []
 
@@ -30,20 +32,20 @@ def apply_policy(window_df: pd.DataFrame) -> pd.DataFrame:
         row = window_df.iloc[i]
 
         cond_max_psi = row.get("max_psi", 0) > PSI_THRESHOLD
-        cond_num_severe = row.get("num_severe", 0) >= MIN_SEVERE_FEATURES
+        cond_num_severe = row.get("num_severe", 0) >= MIN_SEVERE_FEATURES if use_num_severe else True
         perf_drop = row.get("perf_drop", np.nan)
         cond_perf_drop = pd.notna(perf_drop) and (perf_drop >= PERF_DROP_THRESHOLD)
 
         condition = cond_max_psi and cond_num_severe and cond_perf_drop
 
         # persistence check
-        if condition and i >= PERSISTENCE_WINDOWS - 1:
+        if condition and i >= persistence_required - 1:
             persistent = True
-            for j in range(i - PERSISTENCE_WINDOWS + 1, i + 1):
+            for j in range(max(0, i - persistence_required + 1), i + 1):
                 r = window_df.iloc[j]
                 pj = (
                     (r.get("max_psi", 0) > PSI_THRESHOLD)
-                    and (r.get("num_severe", 0) >= MIN_SEVERE_FEATURES)
+                    and ((r.get("num_severe", 0) >= MIN_SEVERE_FEATURES) if use_num_severe else True)
                     and (pd.notna(r.get("perf_drop", np.nan)) and (r.get("perf_drop") >= PERF_DROP_THRESHOLD))
                 )
                 if not pj:

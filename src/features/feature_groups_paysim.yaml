@@ -1,0 +1,9 @@
+monetary:
+  - amount
+  - oldbalanceOrg
+  - newbalanceOrig
+behavioral:
+  - type
+identity:
+  - oldbalanceDest
+  - newbalanceDest
