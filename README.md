@@ -44,21 +44,32 @@ fraud-drift-retraining/
 ├── data/
 │   ├── raw/                # Original datasets
 │   └── processed/          # Cleaned & split data
-├── drift/
-│   ├── windows.py          # Time window construction
-│   ├── detect.py           # PSI + KS drift detection
-│   └── attribution.py      # SHAP-based drift attribution
-├── policy/
-│   ├── window_signals.py   # Window-level signal compression
-│   └── retraining_policy.py# Intelligent retraining rules
-├── pipelines/
-│   ├── run_ieee.py
-│   ├── run_paysim.py
-│   └── run_credit_card.py
-├── reports/
-│   ├── drift_*.csv/png
-│   ├── attribution_*.csv/png
-│   └── summaries.json
+├── models/                 # Trained models
+├── policy/                 # Policy outputs (signals, decisions)
+├── reports/                # Drift and attribution reports
+├── results/                # Summary results and outputs
+├── scripts/                # Utility scripts
+├── src/                    # Source code
+│   ├── config.py           # Configuration
+│   ├── data_prep.py        # Data preparation
+│   ├── evaluate.py         # Model evaluation
+│   ├── features/           # Feature engineering
+│   ├── split.py            # Data splitting
+│   ├── train_model.py      # Model training
+│   ├── data/               # Dataset-specific prep
+│   │   ├── cc_prep.py      # Credit card prep
+│   │   └── paysim_prep.py  # PaySim prep
+│   ├── drift/              # Drift detection and attribution
+│   │   ├── windows.py      # Time window construction
+│   │   ├── detect.py       # PSI + KS drift detection
+│   │   └── attribution.py  # SHAP-based drift attribution
+│   ├── policy/             # Retraining policy
+│   │   ├── window_signals.py   # Window-level signal compression
+│   │   └── retraining_policy.py# Intelligent retraining rules
+│   └── pipelines/          # End-to-end pipelines
+│       ├── run_ieee.py
+│       ├── run_paysim.py
+│       └── run_credit_card.py
 └── README.md
 ```
 
